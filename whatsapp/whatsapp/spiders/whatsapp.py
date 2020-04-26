@@ -4,16 +4,16 @@ import csv
 import urllib2
 
 script_name = 'whatsapp'
-allowed_domains = ['whatsappgroups.app', 'chat.whatsapp.com']
-start_urls = ['https://whatsappgroups.app/']
-file_name = 'data.csv'
-what_to_search = 'https://chat.whatsapp.com/invite'
+allowed_domains = ['whatsgrouplink.com', 'chat.whatsapp.com']
+start_urls = ['https://whatsgrouplink.com']
+file_name = 'whatsapp.csv'
+what_to_search_list = ['https://chat.whatsapp.com/invite']
 
 outfile = open(file_name, "w")
 writer = csv.writer(outfile)
 
 
-class BooksScrapySpider(scrapy.Spider):
+class WhatsappScrapySpider(scrapy.Spider):
     name = script_name
     allowed_domains = allowed_domains
     start_urls = start_urls
@@ -21,7 +21,7 @@ class BooksScrapySpider(scrapy.Spider):
     def parse(self, response):
         urls = response.xpath('//a/@href').extract()
         for url in urls:
-            if str(url).startswith(what_to_search):
+            if len([True for what_to_search in what_to_search_list if str(url).startswith(what_to_search)]) > 0:
                 yield Request(response.urljoin(url), callback=self.parse_group, meta={'url': url})
             yield Request(response.urljoin(url), callback=self.parse)
 
